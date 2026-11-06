@@ -967,12 +967,19 @@ private fun ModelPicker(
                                     ),
                                     modifier = Modifier.weight(1f),
                                 ) {
+                                    // 名称作主标题、modelId 作副标题：名字便于认模型，
+                                    // id 用来看它属于哪个渠道（如 buddy/、trae/）。
                                     Text(
-                                        // 优先显示 provider 自报的 name（如「DeepSeek-V4.1-Flash · x0.11」），
-                                        // 缺失时回退 modelId，与已添加列表的显示保持一致。
                                         text = it.displayName.ifBlank { it.modelId },
                                         style = MaterialTheme.typography.titleSmall,
                                     )
+                                    if (it.displayName.isNotBlank() && it.displayName != it.modelId) {
+                                        Text(
+                                            text = it.modelId,
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        )
+                                    }
 
                                     Row(
                                         verticalAlignment = Alignment.CenterVertically,
