@@ -16,6 +16,7 @@ import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonArray
 import kotlinx.serialization.json.putJsonObject
+import me.rerere.common.http.stringOrNull
 import me.rerere.ai.provider.EmbeddingGenerationParams
 import me.rerere.ai.provider.EmbeddingGenerationResult
 import me.rerere.ai.provider.ImageEditParams
@@ -80,9 +81,10 @@ class OpenAIProvider(
             data.mapNotNull { modelJson ->
                 val modelObj = modelJson.jsonObject
                 val id = modelObj["id"]?.jsonPrimitive?.contentOrNull ?: return@mapNotNull null
-                // 部分 OpenAI 兼容网关在 /models 里额外给出 name（如「GLM-5.3 · x0.69」），
-                // 有就用来做显示名，没有就退回 id，不影响只返回 id 的官方接口。
-                val name = (modelObj["name"] as? JsonPrimitive)?.contentOrNull?.trim()?.takeIf { it.isNotEmpty() }
+                // OpenAI 官方 Model 对象只有 id/created/object/owned_by，没有 name；
+                // 部分兼容网关会额外给出 name（如「GLM-5.3 · x0.69」）。有就用作显示名，
+                // 没有则退回 id，官方接口行为不变。
+                val name = modelObj.stringOrNull("name")?.trim()?.takeIf { it.isNotEmpty() }
 
                 Model(
                     modelId = id,
