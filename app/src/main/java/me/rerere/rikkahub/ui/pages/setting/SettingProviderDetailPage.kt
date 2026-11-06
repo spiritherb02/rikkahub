@@ -968,7 +968,9 @@ private fun ModelPicker(
                                     modifier = Modifier.weight(1f),
                                 ) {
                                     Text(
-                                        text = it.modelId,
+                                        // 优先显示 provider 自报的 name（如「DeepSeek-V4.1-Flash · x0.11」），
+                                        // 缺失时回退 modelId，与已添加列表的显示保持一致。
+                                        text = it.displayName.ifBlank { it.modelId },
                                         style = MaterialTheme.typography.titleSmall,
                                     )
 
