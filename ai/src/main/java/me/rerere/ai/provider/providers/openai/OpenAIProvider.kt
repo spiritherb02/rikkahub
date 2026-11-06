@@ -80,10 +80,13 @@ class OpenAIProvider(
             data.mapNotNull { modelJson ->
                 val modelObj = modelJson.jsonObject
                 val id = modelObj["id"]?.jsonPrimitive?.contentOrNull ?: return@mapNotNull null
+                // 部分 OpenAI 兼容网关在 /models 里额外给出 name（如「GLM-5.3 · x0.69」），
+                // 有就用来做显示名，没有就退回 id，不影响只返回 id 的官方接口。
+                val name = (modelObj["name"] as? JsonPrimitive)?.contentOrNull?.trim()?.takeIf { it.isNotEmpty() }
 
                 Model(
                     modelId = id,
-                    displayName = id,
+                    displayName = name ?: id,
                 )
             }
         }
