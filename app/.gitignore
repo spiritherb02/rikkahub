@@ -4,4 +4,5 @@
 /github
 /play
 google-services.json
+!google-services.json
 app.key
